@@ -1,7 +1,7 @@
-function ChoroplethMap(target, jsonData) {
-      this.target = d3.select(target);
-      this.jsonData = jsonData;
-
+function ChoroplethMap(opts) {
+      this.target = d3.select(opts.target);
+      this.jsonData = opts.jsonData;
+      this.state = opts.state;
       var width = 950,        // dimensions of the svg
           height = 500;      
 
@@ -11,8 +11,8 @@ function ChoroplethMap(target, jsonData) {
           .attr("height", height);
 
       var projection = d3.geoAlbers()
-          .scale(5000)
-          .rotate([103, 0]);
+          .scale(opts.scale)
+          .rotate(opts.rotate);
       
       this.path = d3.geoPath().projection(projection)
 
@@ -33,7 +33,7 @@ ChoroplethMap.prototype.onJsonLoad = function(err, topoData) {
         return console.error(error);
     console.log(topoData.objects['colorado-counties']); //FIXME
     this.svg.selectAll("path")
-        .data(topojson.feature(topoData, topoData.objects['colorado-counties']).features)
+        .data(topojson.feature(topoData, topoData.objects[this.state + '-counties']).features)
         .enter().append("path")
             .attr("fill", (d) => { return this.color(d.properties.VALUE); })
             .attr("d", this.path)

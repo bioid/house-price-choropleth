@@ -29,12 +29,24 @@
     <script src="https://d3js.org/topojson.v2.min.js"></script>
     <script src="choropleth.js"></script>
 
-    <div class="map-container" id="colorado"> </div>
+    <div class="map-container" id="colorado"> <h2> Colorado </h2> </div>
 
-    <div class="map-container" id="new-mexico"> </div>
+    <div class="map-container" id="new-mexico"> <h2> New Mexico </h2> </div>
     <script>
-        var colorado = new ChoroplethMap("#colorado", "merged.json");
-        var new_mexico = new ChoroplethMap("#new-mexico", "merged.json");
+        var colorado = new ChoroplethMap({
+            target: "#colorado", 
+            jsonData: "colorado.json", 
+            state: "colorado",
+            scale: 5000,
+            rotate: [103, 0]
+        });
+        var new_mexico = new ChoroplethMap({
+            target: "#new-mexico", 
+            jsonData: "new-mexico.json", 
+            state: "new-mexico",
+            scale: 5000,
+            rotate: [103, 5]
+        });
     </script>
 
 </body>
