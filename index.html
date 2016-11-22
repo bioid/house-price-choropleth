@@ -9,7 +9,9 @@
     }
 
     path:hover {
-        stroke: white;
+        stroke: green;
+        stroke-width: 2;
+        stroke-dasharray: "10, 10";
     }
 
     .tip {
@@ -25,66 +27,14 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/topojson.v2.min.js"></script>
+    <script src="choropleth.js"></script>
 
+    <div class="map-container" id="colorado"> </div>
+
+    <div class="map-container" id="new-mexico"> </div>
     <script>
-
-        var target = "body";
-
-        var width = 950,        // dimensions of the svg
-            height = 950;      
-
-        // add the svg element
-        var svg = d3.select(target).append("svg")
-            .attr("width", width)
-            .attr("height", height);
-
-        var projection = d3.geoAlbers()
-            .scale(5000)
-            .rotate([103, 0]);
-        
-        var path = d3.geoPath().projection(projection)
-
-        var color = d3.scaleThreshold()
-            .domain([75000, 100000, 125000, 150000, 175000, 200000, 225000, 250000, 275000, 300000, 325000])
-            .range(d3.schemeOrRd[9]);
-
-        var tip = d3.select(target).append("div")
-            .attr("class", "tip")
-            .style("opacity", 0);
-
-        var formatCurrency = function(amount) {
-            // TODO: support for browsers that don't support Intl
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                maximumFractionDigits: 0
-                }).format(amount);
-        };
-
-        function mousemove() {
-            var mouse = d3.mouse(this)
-            tip.style("left", (mouse[0] + 20) + "px")
-                .style("top", (mouse[1] - 28) + "px"); 
-        }
-
-        d3.select("svg").on("mousemove", mousemove);
-        d3.json("merged.json", function(err, json_data) {
-            if (err) 
-                return console.error(error);
-            console.log(json_data.objects['colorado-counties']); //FIXME
-            svg.selectAll("path")
-                .data(topojson.feature(json_data, json_data.objects['colorado-counties']).features)
-                .enter().append("path")
-                    .attr("fill", function(d) { return color(d.properties.VALUE); })
-                    .attr("d", path)
-                    .on("mouseover", function(d) {
-                        tip.style("opacity", .9);
-                        tip.html("County: " + d.properties.NAME + "<br> Median Price: " + formatCurrency(d.properties.VALUE));
-                    })
-                    .on("mouseout", function() {
-                        tip.style("opacity", 0);
-                    });
-        });
-
+        var colorado = new ChoroplethMap("#colorado", "merged.json");
+        var new_mexico = new ChoroplethMap("#new-mexico", "merged.json");
     </script>
+
 </body>
