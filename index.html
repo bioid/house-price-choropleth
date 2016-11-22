@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style>
+    path {
+        fill: #ccc,
+        stroke: #fff,
+        stroke-width: .5px;
+    }
+
+    path:hover {
+        stroke: white;
+    }
+
+    .tip {
+        position: absolute;
+        width: 60px
+        height: 28px;
+        padding: 2px;
+        background: #bbb;
+    }
+</style>
+
+<body>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+
+    <script>
+
+        var target = "body";
+
+        var width = 950,        // dimensions of the svg
+            height = 950;      
+
+        // add the svg element
+        var svg = d3.select(target).append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var projection = d3.geoAlbers()
+            .scale(5000)
+            .rotate([103, 0]);
+        
+        var path = d3.geoPath().projection(projection)
+
+        var color = d3.scaleThreshold()
+            .domain([75000, 100000, 125000, 150000, 175000, 200000, 225000, 250000, 275000, 300000, 325000])
+            .range(d3.schemeOrRd[9]);
+
+        var tip = d3.select(target).append("div")
+            .attr("class", "tip")
+            .style("opacity", 0);
+
+        var formatCurrency = function(amount) {
+            // TODO: support for browsers that don't support Intl
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+                }).format(amount);
+        }
+
+        d3.json("merged.json", function(err, json_data) {
+            if (err) 
+                return console.error(error);
+            console.log(json_data.objects['colorado-counties']); //FIXME
+            svg.selectAll("path")
+                .data(topojson.feature(json_data, json_data.objects['colorado-counties']).features)
+                .enter().append("path")
+                    .attr("fill", function(d) { return color(d.properties.VALUE); })
+                    .attr("d", path)
+                    .on("mouseover", function(d) {
+                        tip.transition().duration(200).style("opacity", .9);
+                        tip.html("County: " + d.properties.NAME + "<br> Median Price: " + formatCurrency(d.properties.VALUE))
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                    })
+                    .on("mouseout", function() {
+                        tip.transition().duration(500).style("opacity", 0);
+                    });
+        });
+
+
+    </script>
+</body>
