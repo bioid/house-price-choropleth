@@ -24,7 +24,6 @@
 <body>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-
     <script src="https://d3js.org/topojson.v2.min.js"></script>
 
     <script>
@@ -60,8 +59,15 @@
                 currency: 'USD',
                 maximumFractionDigits: 0
                 }).format(amount);
+        };
+
+        function mousemove() {
+            var mouse = d3.mouse(this)
+            tip.style("left", (mouse[0] + 20) + "px")
+                .style("top", (mouse[1] - 28) + "px"); 
         }
 
+        d3.select("svg").on("mousemove", mousemove);
         d3.json("merged.json", function(err, json_data) {
             if (err) 
                 return console.error(error);
@@ -72,16 +78,13 @@
                     .attr("fill", function(d) { return color(d.properties.VALUE); })
                     .attr("d", path)
                     .on("mouseover", function(d) {
-                        tip.transition().duration(200).style("opacity", .9);
-                        tip.html("County: " + d.properties.NAME + "<br> Median Price: " + formatCurrency(d.properties.VALUE))
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
+                        tip.style("opacity", .9);
+                        tip.html("County: " + d.properties.NAME + "<br> Median Price: " + formatCurrency(d.properties.VALUE));
                     })
                     .on("mouseout", function() {
-                        tip.transition().duration(500).style("opacity", 0);
+                        tip.style("opacity", 0);
                     });
         });
-
 
     </script>
 </body>
