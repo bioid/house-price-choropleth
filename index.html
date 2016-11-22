@@ -22,15 +22,17 @@
         background: #bbb;
     }
 </style>
-
+<head>
+    <title> Median Home Prices by County (2010-2014) </title>
+</head>
 <body>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/topojson.v2.min.js"></script>
     <script src="choropleth.js"></script>
 
+    <h1> Median Home Prices by County (2010-2014) </h1>
     <div class="map-container" id="colorado"> <h2> Colorado </h2> </div>
-
     <div class="map-container" id="new-mexico"> <h2> New Mexico </h2> </div>
     <script>
         var colorado = new ChoroplethMap({
@@ -51,5 +53,5 @@
 
 </body>
 <footer>
-Data Source: US Census Bureau
+Source:  U.S. Census Bureau, 2010-2014 American Community Survey 5-Year Estimates
 </footer>
